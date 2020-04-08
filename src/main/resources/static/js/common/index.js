@@ -32,6 +32,7 @@ function loading_res() {
         url: "/user/loading_res",
         data: {},
         dataType: "json",
+        async:false,
         error: function (error) {
             layer.alert('加载失败！', {
                 title: '提示框',

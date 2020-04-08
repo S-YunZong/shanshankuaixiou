@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.buba.anwei.dao.SettlementstandardDao" >
+    <!--/*厂商名称查询*/
+    List<AwVendor> selVendor();-->
+    <select id="selVendor" resultType="AwVendor">
+      select id,manufacturer_company_name from aw_vendor
+    </select>
+    <!--/*服务类型查询*/
+    List<AwServiceType> selServiceType();-->
+    <select id="selServiceType" resultType="AwServiceType">
+        select id,service_type from aw_service_type
+    </select>
+    <!--/*保质标志查询*/
+    List<AwSign> selAwSign();-->
+    <select id="selAwSign" resultType="AwSign">
+        select * from aw_sign
+    </select>
+    <!--/*品牌查询*/
+    List<AwBrand> selbrand();-->
+    <select id="selbrand" resultType="AwBrand">
+        select * from aw_brand
+    </select>
+   <!-- /*产品层次查询*/
+    List<AwProduct> selProduct();//品类-->
+    <select id="selProduct" resultType="AwProduct">
+        select * from aw_product where parent_id=0
+    </select>
+    <!--List<AwProduct> seltwoProduct(int id);//二级品类-->
+    <select id="seltwoProduct" resultType="AwProduct">
+        select * from aw_product where parent_id=(select id from aw_product where product_name=#{id})
+    </select>
+   <!-- List<AwCommodityGroup> selCommodityGroup();//商品组-->
+    <select id="selCommodityGroup" resultType="AwCommodityGroup">
+        select * from aw_commodity_group
+    </select>
+    <!--/*维修措施类型查询*/
+    List<AwMaintenanceMeasuresType> selMaintenanceMeasuresType();-->
+    <select id="selMaintenanceMeasuresType" resultType="AwMaintenanceMeasuresType">
+        select * from aw_maintenance_measures_type
+    </select>
+    <!--/*新增厂商结算标准*/
+    boolean insSettlementstandard(AwManufacturerSettlementstandard settlementstandard);-->
+    <insert id="insSettlementstandard">
+        insert into aw_manufacturer_settlementstandard
+        (source,service_type,quality_standard,brand,close_type,close_scale,product_id,two_product_id,commodity_group_id)values
+        (#{settlementstandard.source},#{settlementstandard.serviceType},#{settlementstandard.qualityStandard},#{settlementstandard.brand},"按固定值",#{settlementstandard.closeScale},#{settlementstandard.productId},#{settlementstandard.twoProductId},#{settlementstandard.commodityGroupId})
+    </insert>
+    <!--/*查询厂商结算标准*/
+    List<AwManufacturerSettlementstandard> selsettlementstandard(AwManufacturerSettlementstandard settlementstandard);-->
+    <select id="selsettlementstandard" resultType="AwManufacturerSettlementstandard">
+        select m.*,d.department_name closeDepartment from aw_manufacturer_settlementstandard m,aw_department d,aw_vendor v
+        <where>
+            v.manufacturer_company_name=m.source
+            and v.contracting_department_id=d.id
+            <if test="settlementstandard.source!=null and settlementstandard.source!=''">
+                and m.source=#{settlementstandard.source}
+            </if>
+            <if test="settlementstandard.serviceType!=null and settlementstandard.serviceType!=''">
+                and m.service_type=#{settlementstandard.serviceType}
+            </if>
+            <if test="settlementstandard.qualityStandard!=null and settlementstandard.qualityStandard!=''">
+                and m.quality_standard=#{settlementstandard.qualityStandard}
+            </if>
+            <if test="settlementstandard.brand!=null and settlementstandard.brand!=''">
+                and m.brand=#{settlementstandard.brand}
+            </if>
+            <if test="settlementstandard.productId!=null and settlementstandard.productId!=''">
+                and m.product_id=#{settlementstandard.productId}
+            </if>
+            <if test="settlementstandard.twoProductId!=null and settlementstandard.twoProductId!=''">
+                and m.two_product_id=#{settlementstandard.twoProductId}
+            </if>
+            <if test="settlementstandard.commodityGroupId!=null and settlementstandard.commodityGroupId!=''">
+                and m.commodity_group_id=#{settlementstandard.commodityGroupId}
+            </if>
+            <if test="settlementstandard.maintenanceMeasures!=null and settlementstandard.maintenanceMeasures!=''">
+                and m.maintenance_measures=#{settlementstandard.maintenanceMeasures}
+            </if>
+        </where>
+    </select>
+    <!-- /*查询结算部门*/
+    List<AwDepartment> selAwDepartment();-->
+    <select id="selAwDepartment" resultType="AwDepartment">
+        select * from aw_department
+    </select>
+    <!--/*删除厂商结算标准*/
+    boolean delsettlementstandard(int id);-->
+    <delete id="delsettlementstandard" parameterType="int">
+        delete from aw_manufacturer_settlementstandard where id=#{id}
+    </delete>
+    <!--/*查询厂商结算标准*/
+    AwManufacturerSettlementstandard selAwManufacturerSettlementstandard(int id);-->
+    <select id="selAwManufacturerSettlementstandard" resultType="AwManufacturerSettlementstandard">
+        select m.*,d.department_name closeDepartment from aw_manufacturer_settlementstandard m,aw_department d,aw_vendor v
+        where v.manufacturer_company_name=m.source
+        and v.contracting_department_id=d.id
+        and m.id=#{id}
+    </select>
+    <!--/*修改厂商结算标准*/
+    boolean updsettlementstandard(@Param("settlementstandard") AwManufacturerSettlementstandard settlementstandard);-->
+    <update id="updsettlementstandard" parameterType="AwManufacturerSettlementstandard">
+        update aw_manufacturer_settlementstandard set source=#{settlementstandard.source},service_type=#{settlementstandard.serviceType},quality_standard=#{settlementstandard.qualityStandard},brand=#{settlementstandard.brand},maintenance_measures=#{settlementstandard.maintenanceMeasures},
+        close_scale=#{settlementstandard.closeScale},product_id=#{settlementstandard.productId},two_product_id=#{settlementstandard.twoProductId},commodity_group_id=#{settlementstandard.commodityGroupId},maintenance_measures=#{settlementstandard.maintenanceMeasures} where id=#{settlementstandard.id}
+    </update>
+    <!--/*导出*/
+    List<AwManufacturerSettlementstandard> seldaochu(@Param("id") String[] id);-->
+    <select id="seldaochu" resultType="AwManufacturerSettlementstandard">
+        select m.*,d.department_name closeDepartment from aw_manufacturer_settlementstandard m,aw_department d,aw_vendor v
+        where v.manufacturer_company_name=m.source
+        and v.contracting_department_id=d.id
+        and m.id
+        <if test="id.length!=0">
+            in
+        </if>
+        <foreach collection="id" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+    <!--/*导入 添加数据*/
+    boolean insdaoru (@Param("list") List<AwManufacturerSettlementstandard> list);-->
+    <insert id="insdaoru">
+        insert into aw_manufacturer_settlementstandard
+        (source,service_type,quality_standard,brand,close_type,close_scale,product_id,two_product_id,commodity_group_id,maintenance_measures)values
+        <foreach collection="list" item="list" separator=",">
+            (#{list.source},#{list.serviceType},#{list.qualityStandard},#{list.brand},
+            #{list.closeType},#{list.closeScale},#{list.productId},#{list.twoProductId},#{list.commodityGroupId},
+            #{list.maintenanceMeasures})
+        </foreach>
+    </insert>
+</mapper>

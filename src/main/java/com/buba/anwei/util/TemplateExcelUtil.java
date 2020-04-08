@@ -1,16 +1,37 @@
 package com.buba.anwei.util;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.*;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class TemplateExcelUtil<T> {
 
@@ -24,7 +45,7 @@ public class TemplateExcelUtil<T> {
      *  dtoList     需要显示的数据集合,集合中一定要放置符合javabean风格的类的对象
      * 返回响应体
      */
-    public  void exportExcel(String temp,String target, String[] params,List<String> headersId,
+    public  void exportExcel(InputStream temp,String target, String[] params,List<String> headersId,
                             List<T> dtoList) {
     	
         /*（二）字段*/
@@ -39,10 +60,10 @@ public class TemplateExcelUtil<T> {
         
         /* （三）读取模板*/
         XSSFWorkbook wb = null;//创建工作簿
-        File file = new File(temp);
+        /*File file = new File(temp);  new FileInputStream(file)*/
         try {  
-              wb = (XSSFWorkbook) WorkbookFactory.create(new FileInputStream(file));        
-            } catch (FileNotFoundException e) {  
+              wb = (XSSFWorkbook) WorkbookFactory.create(temp);
+            } catch (FileNotFoundException e) {
               e.printStackTrace();  
             } catch (InvalidFormatException e) {  
               e.printStackTrace();  
@@ -153,15 +174,15 @@ public class TemplateExcelUtil<T> {
     public static List<List<String>> readExcel(InputStream is)
             throws IOException {
         Workbook wb = null;
-        try {
-            wb = WorkbookFactory.create(is);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (InvalidFormatException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        try {  
+              wb = WorkbookFactory.create(is);        
+            } catch (FileNotFoundException e) {  
+              e.printStackTrace();  
+            } catch (InvalidFormatException e) {  
+              e.printStackTrace();  
+            } catch (IOException e) {  
+              e.printStackTrace();  
+            }  
 
         /** 得到第一个sheet */
         Sheet sheet = wb.getSheetAt(0);
@@ -176,7 +197,7 @@ public class TemplateExcelUtil<T> {
 
         List<List<String>> dataLst = new ArrayList<List<String>>();
         /** 循环Excel的行 */
-        for (int r = 4; r < totalRows; r++) {
+        for (int r = 0; r < totalRows; r++) {
             Row row = sheet.getRow(r);
             if (row == null)
                 continue;
@@ -189,31 +210,31 @@ public class TemplateExcelUtil<T> {
                      /*HSSFDataFormatter hSSFDataFormatter = new HSSFDataFormatter();
                      cellValue= hSSFDataFormatter.formatCellValue(cell);*/
 
-                    // 以下是判断数据的类型
-                    CellType type = cell.getCellTypeEnum();
+                   // 以下是判断数据的类型
+                	CellType type = cell.getCellTypeEnum();
 
                     switch (type) {
-                        case NUMERIC: // 数字
-                            cellValue = cell.getNumericCellValue() + "";
-                            break;
-                        case STRING: // 字符串
-                            cellValue = cell.getStringCellValue();
-                            break;
-                        case BOOLEAN: // Boolean
-                            cellValue = cell.getBooleanCellValue() + "";
-                            break;
-                        case FORMULA: // 公式
-                            cellValue = cell.getCellFormula() + "";
-                            break;
-                        case BLANK: // 空值
-                            cellValue = "";
-                            break;
-                        case _NONE: // 故障
-                            cellValue = "非法字符";
-                            break;
-                        default:
-                            cellValue = "未知类型";
-                            break;
+                    case NUMERIC: // 数字
+                        cellValue = cell.getNumericCellValue() + "";
+                        break;
+                    case STRING: // 字符串
+                        cellValue = cell.getStringCellValue();
+                        break;
+                    case BOOLEAN: // Boolean
+                        cellValue = cell.getBooleanCellValue() + "";
+                        break;
+                    case FORMULA: // 公式
+                        cellValue = cell.getCellFormula() + "";
+                        break;
+                    case BLANK: // 空值
+                        cellValue = "";
+                        break;
+                    case _NONE: // 故障
+                        cellValue = "非法字符";
+                        break;
+                    default:
+                        cellValue = "未知类型";
+                        break;
                     }
                 }
                 rowLst.add(cellValue);
@@ -223,4 +244,5 @@ public class TemplateExcelUtil<T> {
         }
         return dataLst;
     }
+
 }
