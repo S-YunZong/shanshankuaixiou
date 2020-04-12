@@ -34,7 +34,7 @@ import java.util.List;
 public class SettlementstandardController {
     @Resource
     private SettlementstandardService settlementstandardService;
-
+    /*---------厂商结算标准-----------*/
     /*厂商名称查询*/
     @RequestMapping("selAwVendor")
     @ResponseBody
@@ -204,20 +204,47 @@ public class SettlementstandardController {
         for(int p=4;p<poiin.size();p++) {
             i=new AwManufacturerSettlementstandard();
             //判断比填选项是否为空
-            if(poiin.get(p).get(1)==null&&poiin.get(p).get(9)==null&&poiin.get(p).get(10)==null&&poiin.get(p).get(1)==""&&poiin.get(p).get(9)==""&&poiin.get(p).get(10)==""){
+            if(poiin.get(p).get(1).equals("null")&&poiin.get(p).get(9).equals("null")&&poiin.get(p).get(10).equals("null")&&poiin.get(p).get(1)==""&&poiin.get(p).get(9)==""&&poiin.get(p).get(10)==""){
                 //跳过当前循环，继续循环
                 continue;
             }
             i.setSource(poiin.get(p).get(1));//来源
-            i.setServiceType(poiin.get(p).get(2));//服务类型
-            i.setQualityStandard(poiin.get(p).get(3));//质保标志
-            i.setBrand(poiin.get(p).get(4));//品牌
-            i.setProductId(poiin.get(p).get(5));//品类
-            i.setTwoProductId(poiin.get(p).get(6));//二级品类
-            i.setCommodityGroupId(poiin.get(p).get(7));//商品组
-            i.setMaintenanceMeasures(poiin.get(p).get(8));//维修措施类型
-            i.setCloseType(poiin.get(p).get(9));//结算类型
-            i.setCloseScale(poiin.get(p).get(10));//结算值
+            if(poiin.get(p).get(2).equals("null")){
+            }else {
+                i.setServiceType(poiin.get(p).get(2));//服务类型
+            }
+            if(poiin.get(p).get(3).equals("null")){
+            }else {
+                i.setQualityStandard(poiin.get(p).get(3));//质保标志
+            }
+            if(poiin.get(p).get(4).equals("null")){
+            }else {
+                i.setBrand(poiin.get(p).get(4));//品牌
+            }
+            if(poiin.get(p).get(5).equals("null")){
+            }else {
+                i.setProductId(poiin.get(p).get(5));//品类
+            }
+            if(poiin.get(p).get(6).equals("null")){
+            }else {
+                i.setTwoProductId(poiin.get(p).get(6));//二级品类
+            }
+            if(poiin.get(p).get(7).equals("null")){
+            }else {
+                i.setCommodityGroupId(poiin.get(p).get(7));//商品组
+            }
+            if(poiin.get(p).get(8).equals("null")){
+            }else {
+                i.setMaintenanceMeasures(poiin.get(p).get(8));//维修措施类型
+            }
+            if(poiin.get(p).get(9).equals("null")){
+            }else {
+                i.setCloseType(poiin.get(p).get(9));//结算类型
+            }
+            if(poiin.get(p).get(10).equals("null")){
+            }else {
+                i.setCloseScale(poiin.get(p).get(10));//结算值
+            }
             List<AwManufacturerSettlementstandard> li=settlementstandardService.selsettlementstandard2(i);
             //确保数据不重复
             if(li.size()==0){
@@ -231,7 +258,164 @@ public class SettlementstandardController {
         return inspoi;
 
     }
-
-    private class PathTest {
+    /*-------内部结算标准-----*/
+    /*查询内部结算标准 重复*/
+    @RequestMapping("selInterior2")
+    @ResponseBody
+    public int selInterior2(AwInteriorSettlementstandard Interior){
+        List<AwInteriorSettlementstandard> list=settlementstandardService.selInterior2(Interior);
+        return list.size();
     }
+    /*新增内部结算标准*/
+    @RequestMapping("insInterior")
+    @ResponseBody
+    public boolean insInterior(AwInteriorSettlementstandard Interior){
+        boolean b=settlementstandardService.insInterior(Interior);
+        return b;
+    }
+    /*查询内部结算标准 分页*/
+    @RequestMapping("selInterior")
+    @ResponseBody
+    public LimitVo selInterior(LimitVo page,AwInteriorSettlementstandard Interior){
+        settlementstandardService.selInterior(page,Interior);
+        return page;
+    }
+    /*删除内部结算标准*/
+    @RequestMapping("delInterior")
+    @ResponseBody
+    public boolean delInterior(Integer id) {
+        boolean boo=settlementstandardService.delInterior(id);
+        return boo;
+    }
+    /*查询内部结算标准*/
+    @RequestMapping("selInteriorid")
+    @ResponseBody
+    public AwInteriorSettlementstandard selInteriorid(Integer id){
+        AwInteriorSettlementstandard a=settlementstandardService.selInteriorid(id);
+        return a;
+    }
+    /*修改内部结算标准*/
+    @RequestMapping("updInterior")
+    @ResponseBody
+    public boolean updInterior(AwInteriorSettlementstandard Interior){
+        boolean boo=settlementstandardService.updInterior(Interior);
+        return boo;
+    }
+    /*内部结算标准导出*/
+    @RequestMapping("nboutput")
+    @ResponseBody
+    public boolean nboutput(@RequestParam("filename") MultipartFile filename,@RequestParam("id") String id[],HttpSession session) throws IOException {
+        boolean b=false;
+        Date time=new Date();
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat sdf2=new SimpleDateFormat("yyyy-MM-dd");
+        String format=sdf.format(time);
+        String format2=sdf2.format(time);
+        File file1 = new File("E://追云工作室/山山快修/作业/xlsx文件存储");
+        if(!file1.exists()) {//判断目录是否存在
+            file1.mkdirs();//创建目录
+        }
+        //存储位置起新名字
+        String target=file1+"/内部结算标准_"+format+".xlsx";
+        //表格头部4参数
+        String[] params=new String[4];
+        AwUser user= (AwUser) session.getAttribute("USER_SESSION");
+        params[0]="2019-1-2";
+        params[1]="2019-2-20";
+        params[2]=user.getUserName();
+        params[3]=format2;
+        //内容
+        List<AwInteriorSettlementstandard> listarea = settlementstandardService.selInteriordc(id);
+        if(listarea.size()!=0){
+            b=true;
+        }
+        List<String> propertyList=Interiorid();
+        TemplateExcelUtil ExcelUtil=new TemplateExcelUtil();
+        ExcelUtil.exportExcel(filename.getInputStream(), target, params, propertyList, listarea);
+        return b;
+    }
+    private List<String> Interiorid() {
+        // TODO Auto-generated method stub
+        List<String> list=new ArrayList<>();
+        list.add("shangyouName");//结算上游
+        list.add("downstreamName");//结算下游
+        list.add("serviceType");//服务类型
+        list.add("qualityStandard");//保质标志
+        list.add("brand");//品牌
+        list.add("productId");//品类
+        list.add("twoProductId");//二级品类
+        list.add("commodityGroupId");//商品组
+        list.add("maintenanceMeasures");//维修措施类型
+        list.add("closeType");//结算类型
+        list.add("closeScale");//结算比例值
+        return list;
+    }
+    /*内部结算标准导入*/
+    @RequestMapping("nbdaoru")
+    @ResponseBody
+    public boolean nbdaoru(@RequestParam("filename") MultipartFile filename) throws IOException {
+        List<List<String>> poiin = TemplateExcelUtil.readExcel(filename.getInputStream());
+        List<AwInteriorSettlementstandard> list=new ArrayList<>();
+        AwInteriorSettlementstandard i=null;
+        for(int p=4;p<poiin.size();p++) {
+            i=new AwInteriorSettlementstandard();
+            //判断比填选项是否为空
+            if(poiin.get(p).get(9).equals("null")&&poiin.get(p).get(10).equals("null")&&poiin.get(p).get(9)==""&&poiin.get(p).get(10)==""){
+                //跳过当前循环，继续循环
+                continue;
+            }
+            if(poiin.get(p).get(1).equals("null")){
+            }else {
+                i.setDownstreamName(poiin.get(p).get(1));//结算下游
+            }
+            if(poiin.get(p).get(2).equals("null")){
+            }else {
+                i.setServiceType(poiin.get(p).get(2));//服务类型
+            }
+            if(poiin.get(p).get(3).equals("null")){
+            }else {
+                i.setQualityStandard(poiin.get(p).get(3));//质保标志
+            }
+            if(poiin.get(p).get(4).equals("null")){
+            }else {
+                i.setBrand(poiin.get(p).get(4));//品牌
+            }
+            if(poiin.get(p).get(5).equals("null")){
+            }else {
+                i.setProductId(poiin.get(p).get(5));//品类
+            }
+            if(poiin.get(p).get(6).equals("null")){
+            }else {
+                i.setTwoProductId(poiin.get(p).get(6));//二级品类
+            }
+            if(poiin.get(p).get(7).equals("null")){
+            }else {
+                i.setCommodityGroupId(poiin.get(p).get(7));//商品组
+            }
+            if(poiin.get(p).get(8).equals("null")){
+            }else {
+                i.setMaintenanceMeasures(poiin.get(p).get(8));//维修措施类型
+            }
+            if(poiin.get(p).get(9).equals("null")){
+            }else {
+                i.setCloseType(poiin.get(p).get(9));//结算类型
+            }
+            if(poiin.get(p).get(10).equals("null")){
+            }else {
+                i.setCloseScale(poiin.get(p).get(10));//结算值
+            }
+            List<AwInteriorSettlementstandard> li=settlementstandardService.selInterior2(i);
+            //确保数据不重复
+            if(li.size()==0){
+                list.add(i);
+            }
+        }
+        boolean inspoi=false;
+        if(list.size()!=0){
+            inspoi = settlementstandardService.insInteriordr(list);
+        }
+        return inspoi;
+
+    }
+
 }

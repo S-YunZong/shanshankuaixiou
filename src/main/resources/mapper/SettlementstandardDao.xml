@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.buba.anwei.dao.SettlementstandardDao" >
+    <!-- ========厂商结算标准========= -->
     <!--/*厂商名称查询*/
     List<AwVendor> selVendor();-->
     <select id="selVendor" resultType="AwVendor">
@@ -124,6 +125,99 @@
         (source,service_type,quality_standard,brand,close_type,close_scale,product_id,two_product_id,commodity_group_id,maintenance_measures)values
         <foreach collection="list" item="list" separator=",">
             (#{list.source},#{list.serviceType},#{list.qualityStandard},#{list.brand},
+            #{list.closeType},#{list.closeScale},#{list.productId},#{list.twoProductId},#{list.commodityGroupId},
+            #{list.maintenanceMeasures})
+        </foreach>
+    </insert>
+    <!-- ========内部结算标准========= -->
+
+    <!--/*查询内部结算标准*/
+    List<AwInteriorSettlementstandard> selInterior(@Param("Interior") AwInteriorSettlementstandard Interior);-->
+    <select id="selInterior" resultType="AwInteriorSettlementstandard">
+        SELECT DISTINCT i.*,d.department_name shangyouName
+        FROM aw_interior_settlementstandard i,aw_department d,
+        (SELECT d.up_department_id FROM aw_interior_settlementstandard i,aw_department d WHERE
+        i.downstream_name=d.department_name) n
+        <where>
+            d.id=n.up_department_id
+            <if test="Interior.downstreamName!=null and Interior.downstreamName!=''">
+                and i.downstream_name=#{Interior.downstreamName}
+            </if>
+            <if test="Interior.serviceType!=null and Interior.serviceType!=''">
+                and i.service_type=#{Interior.serviceType}
+            </if>
+            <if test="Interior.qualityStandard!=null and Interior.qualityStandard!=''">
+                and i.quality_standard=#{Interior.qualityStandard}
+            </if>
+            <if test="Interior.brand!=null and Interior.brand!=''">
+                and i.brand=#{Interior.brand}
+            </if>
+            <if test="Interior.productId!=null and Interior.productId!=''">
+                and i.product_id=#{Interior.productId}
+            </if>
+            <if test="Interior.twoProductId!=null and Interior.twoProductId!=''">
+                and i.two_product_id=#{Interior.twoProductId}
+            </if>
+            <if test="Interior.commodityGroupId!=null and Interior.commodityGroupId!=''">
+                and i.commodity_group_id=#{Interior.commodityGroupId}
+            </if>
+        </where>
+    </select>
+    <!--/*新增内部结算标准*/
+    boolean insInterior(@Param("Interior") AwInteriorSettlementstandard Interior);-->
+    <insert id="insInterior" parameterType="AwInteriorSettlementstandard">
+        insert into aw_interior_settlementstandard
+        (downstream_name,service_type,quality_standard,brand,close_type,close_scale,product_id,two_product_id,commodity_group_id)values
+        (#{Interior.downstreamName},#{Interior.serviceType},#{Interior.qualityStandard},#{Interior.brand},#{Interior.closeType},#{Interior.closeScale},#{Interior.productId},#{Interior.twoProductId},#{Interior.commodityGroupId})
+    </insert>
+    <!--/*删除内部结算标准*/
+    boolean delInterior(int id);-->
+    <delete id="delInterior" parameterType="int">
+        delete from aw_interior_settlementstandard where id=#{id}
+    </delete>
+    <!--/*查询内部结算标准*/
+    AwInteriorSettlementstandard selInteriorid(int id);-->
+    <select id="selInteriorid" resultType="AwInteriorSettlementstandard">
+        SELECT DISTINCT i.*,d.department_name shangyouName
+        FROM aw_interior_settlementstandard i,aw_department d,(
+        SELECT d.up_department_id
+        FROM aw_interior_settlementstandard i,aw_department d
+        WHERE i.downstream_name=d.department_name) n
+        where d.id=n.up_department_id
+        and i.id=#{id}
+    </select>
+    <!--/*修改内部结算标准*/
+    boolean updInterior(AwInteriorSettlementstandard Interior);-->
+    <update id="updInterior" parameterType="AwInteriorSettlementstandard">
+        update aw_interior_settlementstandard
+        set downstream_name=#{Interior.downstreamName},service_type=#{Interior.serviceType},quality_standard=#{Interior.qualityStandard},brand=#{Interior.brand},maintenance_measures=#{Interior.maintenanceMeasures},
+        close_scale=#{Interior.closeScale},product_id=#{Interior.productId},two_product_id=#{Interior.twoProductId},commodity_group_id=#{Interior.commodityGroupId},maintenance_measures=#{Interior.maintenanceMeasures}
+        where id=#{Interior.id}
+    </update>
+    <!--/*内部结算标准导出*/
+    List<AwInteriorSettlementstandard> selInteriordc(@Param("id") String[] id);-->
+    <select id="selInteriordc" resultType="AwInteriorSettlementstandard">
+        SELECT DISTINCT i.*,d.department_name shangyouName
+        FROM aw_interior_settlementstandard i,aw_department d,(
+        SELECT d.up_department_id
+        FROM aw_interior_settlementstandard i,aw_department d
+        WHERE i.downstream_name=d.department_name) n
+        where d.id=n.up_department_id
+        and i.id
+        <if test="id.length!=0">
+            in
+        </if>
+        <foreach collection="id" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+    <!--/*内部结算标准导入*/
+    boolean insInteriordr(@Param("list") List<AwInteriorSettlementstandard> list);-->
+    <insert id="insInteriordr">
+        insert into aw_interior_settlementstandard
+        (downstream_name,service_type,quality_standard,brand,close_type,close_scale,product_id,two_product_id,commodity_group_id,maintenance_measures)values
+        <foreach collection="list" item="list" separator=",">
+            (#{list.downstreamName},#{list.serviceType},#{list.qualityStandard},#{list.brand},
             #{list.closeType},#{list.closeScale},#{list.productId},#{list.twoProductId},#{list.commodityGroupId},
             #{list.maintenanceMeasures})
         </foreach>

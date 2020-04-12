@@ -13,6 +13,7 @@ import java.util.List;
  * \
  */
 public interface SettlementstandardService {
+    /*------------厂商结算标准---------*/
     /*厂商名称查询*/
     List<AwVendor> selVendor();
     /*服务类型查询*/
@@ -45,4 +46,21 @@ public interface SettlementstandardService {
     List<AwManufacturerSettlementstandard> seldaochu(@Param("id") String[] id);
     /*导入 添加数据*/
     boolean insdaoru (@Param("list") List<AwManufacturerSettlementstandard> list);
+    /*------------内部结算标准---------*/
+    /*查询内部结算标准*/
+    void selInterior(LimitVo page,AwInteriorSettlementstandard Interior);
+    /*查询内部结算标准*/
+    List<AwInteriorSettlementstandard> selInterior2(AwInteriorSettlementstandard Interior);
+    /*新增内部结算标准*/
+    boolean insInterior(AwInteriorSettlementstandard Interior);
+    /*删除内部结算标准*/
+    boolean delInterior(int id);
+    /*查询内部结算标准*/
+    AwInteriorSettlementstandard selInteriorid(int id);
+    /*修改内部结算标准*/
+    boolean updInterior(AwInteriorSettlementstandard Interior);
+    /*内部结算标准导出*/
+    List<AwInteriorSettlementstandard> selInteriordc(@Param("id") String[] id);
+    /*内部结算标准导入*/
+    boolean insInteriordr(@Param("list") List<AwInteriorSettlementstandard> list);
 }

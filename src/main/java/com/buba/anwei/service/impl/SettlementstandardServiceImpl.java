@@ -110,4 +110,48 @@ public class SettlementstandardServiceImpl implements SettlementstandardService 
     public boolean insdaoru(List<AwManufacturerSettlementstandard> list) {
         return settlementstandardDao.insdaoru(list);
     }
+
+    @Override
+    public void selInterior(LimitVo page, AwInteriorSettlementstandard Interior) {
+        PageHelper.offsetPage(page.getOffset(), page.getLimit());
+        List<AwInteriorSettlementstandard> list = settlementstandardDao.selInterior(Interior);
+        PageInfo<AwInteriorSettlementstandard> info = new PageInfo<>(list);
+        page.setTotal(Integer.valueOf(String.valueOf(info.getTotal())));
+        page.setRows(info.getList());
+    }
+
+    @Override
+    public List<AwInteriorSettlementstandard> selInterior2(AwInteriorSettlementstandard Interior) {
+        return settlementstandardDao.selInterior(Interior);
+    }
+
+    @Override
+    public boolean insInterior(AwInteriorSettlementstandard Interior) {
+        return settlementstandardDao.insInterior(Interior);
+    }
+
+    @Override
+    public boolean delInterior(int id) {
+        return settlementstandardDao.delInterior(id);
+    }
+
+    @Override
+    public AwInteriorSettlementstandard selInteriorid(int id) {
+        return settlementstandardDao.selInteriorid(id);
+    }
+
+    @Override
+    public boolean updInterior(AwInteriorSettlementstandard Interior) {
+        return settlementstandardDao.updInterior(Interior);
+    }
+
+    @Override
+    public List<AwInteriorSettlementstandard> selInteriordc(String[] id) {
+        return settlementstandardDao.selInteriordc(id);
+    }
+
+    @Override
+    public boolean insInteriordr(List<AwInteriorSettlementstandard> list) {
+        return settlementstandardDao.insInteriordr(list);
+    }
 }

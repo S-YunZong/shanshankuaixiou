@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 @Mapper
 public interface SettlementstandardDao {
+    /*------------厂商结算标准---------*/
     /*厂商名称查询*/
     List<AwVendor> selVendor();
     /*服务类型查询*/
@@ -33,8 +34,23 @@ public interface SettlementstandardDao {
     AwManufacturerSettlementstandard selAwManufacturerSettlementstandard(@Param("id") int id);
     /*修改厂商结算标准*/
     boolean updsettlementstandard(@Param("settlementstandard") AwManufacturerSettlementstandard settlementstandard);
-    /*导出 查找数据*/
+    /*厂商结算标准导出 查找数据*/
     List<AwManufacturerSettlementstandard> seldaochu(@Param("id") String[] id);
-    /*导入 添加数据*/
+    /*厂商结算标准导入 添加数据*/
     boolean insdaoru (@Param("list") List<AwManufacturerSettlementstandard> list);
+    /*------------内部结算标准---------*/
+    /*查询内部结算标准*/
+    List<AwInteriorSettlementstandard> selInterior(@Param("Interior") AwInteriorSettlementstandard Interior);
+    /*新增内部结算标准*/
+    boolean insInterior(@Param("Interior") AwInteriorSettlementstandard Interior);
+    /*删除内部结算标准*/
+    boolean delInterior(int id);
+    /*查询内部结算标准*/
+    AwInteriorSettlementstandard selInteriorid(int id);
+    /*修改内部结算标准*/
+    boolean updInterior(@Param("Interior") AwInteriorSettlementstandard Interior);
+    /*内部结算标准导出*/
+    List<AwInteriorSettlementstandard> selInteriordc(@Param("id") String[] id);
+    /*内部结算标准导入*/
+    boolean insInteriordr(@Param("list") List<AwInteriorSettlementstandard> list);
 }
